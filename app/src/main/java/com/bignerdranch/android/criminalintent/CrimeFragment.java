@@ -1,5 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -76,8 +78,7 @@ public class CrimeFragment extends Fragment {
         });
 
         mDateButton = (Button) v.findViewById(R.id.crime_date);
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d, yyyy");
-        mDateButton.setText(sdf.format(mCrime.getDate()));
+        updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,5 +99,23 @@ public class CrimeFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data
+                    .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            updateDate();
+        }
+    }
+
+    private void updateDate() {
+        mDateButton.setText(mCrime.getDate().toString());
     }
 }
